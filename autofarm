@@ -40,6 +40,8 @@ else
 	getgenv().loadedR = true
 end
 
+local xspin = 0
+
 local httprequest = (syn and syn.request) or http and http.request or http_request or (fluxus and fluxus.request) or request
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/CF-Trail/random/main/hook/hookwscripts.lua"))()
@@ -373,6 +375,26 @@ boothOtherSettings:AddToggle('donationJumpToggle', {
     Default = true,
     Tooltip = 'Automatically jumps amount of R$ you got donated',
 })
+
+boothOtherSettings:AddToggle('spinSet', {
+    Text = 'Spin',
+    Default = false,
+    Tooltip = '1R$ Donated = +1 spin speed',
+})
+
+Toggles.spinSet:OnChanged(function()
+	local valll = Toggles.spinSet.Value
+	if valll == true then
+		local root = Players.LocalPlayer.Character.Humanoid.RootPart
+		local Spin = Instance.new("BodyAngularVelocity")
+		Spin.Name = "Spin"
+		Spin.Parent = root
+		Spin.MaxTorque = Vector3.new(0, math.huge, 0)
+		Spin.AngularVelocity = Vector3.new(0,0.5,0)
+	elseif valll == false and Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin') then
+		Players.LocalPlayer.Character.Humanoid.RootPart.Spin:Destroy()
+	end
+end)
 
 boothOtherSettings:AddDropdown('standingPositionDrop', {
     Values = { 'Front', 'Right', 'Left', 'Behind' },
@@ -730,6 +752,7 @@ end
 local RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	hopSet()
+	xspin = xspin + Players.LocalPlayer.leaderstats.Raised.Value - RaisedC
 	if Toggles.webhookToggleT.Value == true then
 		webhook("💰 Tip | Amount: " .. tostring(Players.LocalPlayer.leaderstats.Raised.Value - RaisedC) .. 'R$ (after tax: ' .. tostring(math.floor((Players.LocalPlayer.leaderstats.Raised.Value - RaisedC) * 0.6)) .. 'R$) | Total: ' .. tostring(Players.LocalPlayer.leaderstats.Raised.Value) .. 'R$ | Account: ' .. Players.LocalPlayer.DisplayName .. ' (' .. Players.LocalPlayer.Name .. ')')
 	end
@@ -738,7 +761,11 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			serverHop()
 		end)
 	end
-	if Toggles.donationJumpToggle.Value == true then
+	if Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin') and Toggles.spinSet.Value == true then
+		local spin = Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin')
+		spin.AngularVelocity = Vector3.new(0,xspin,0)
+	end
+	if Toggles.donationJumpToggle.Value == true and Toggles.spinSet.Value == false then
 			task.spawn(function()
 				if Options.jumpsPerRobux.Value == 1 then
 					for i = 1, game:GetService('Players').LocalPlayer.leaderstats.Raised.value - RaisedC do
