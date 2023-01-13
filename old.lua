@@ -980,6 +980,7 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 end)
 update()
 
+task.wait(5)
 Players.LocalPlayer.CharacterRemoving:Connect(function()
 	if getgenv().settings.spinSet then
 		serverHop()
