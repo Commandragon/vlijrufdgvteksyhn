@@ -36,10 +36,10 @@ end
 local xspin = 0
 
 print('TurningGlobe ily thanks for showcasing / szze#6220')
-if getgenv().loaded then
+if getgenv().loadedRR then
 	return
 else
-	getgenv().loaded = true
+	getgenv().loadedRR = true
 end
 loadstring(game:HttpGet("https://raw.githubusercontent.com/CF-Trail/random/main/hook/hookwscripts.lua"))()
 task.wait()
