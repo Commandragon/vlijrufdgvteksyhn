@@ -393,7 +393,7 @@ local function webhook(msg)
 end
 	  
   --GUI
-local Window = library:AddWindow("Loading...",
+local Window = library:AddWindow("welcome dtt haters | szze#6220",
   {
 	main_color = Color3.fromRGB(80, 80, 80),
 	min_size = Vector2.new(373, 433),
@@ -980,13 +980,14 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 end)
 update()
 
+task.spawn(function()
 task.wait(5)
 Players.LocalPlayer.CharacterRemoving:Connect(function()
 	if getgenv().settings.spinSet then
 		serverHop()
 	end
 end)
-
+end)
 local msgdone = game:GetService('ReplicatedStorage').DefaultChatSystemChatEvents.OnMessageDoneFiltering
 local randommsgs = {
 	'yes',
