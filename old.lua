@@ -18,8 +18,8 @@ repeat
 until game:IsLoaded()
 
 if isfile and writefile and typeof(isfile) == 'function' and typeof(writefile) == 'function' then
-	if not isfile('PromptedDiscordCFCommunity2.txt') then
-		writefile('PromptedDiscordCFCommunity2.txt', game:GetService('HttpService'):JSONEncode('hi'))
+	if not isfile('PromptedDiscordCFCommunity.txt') then
+		writefile('PromptedDiscordCFCommunity.txt', game:GetService('HttpService'):JSONEncode('hi'))
 		local Module = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Discord%20Inviter/Source.lua"))()
 		Module.Prompt({
 			invite = "https://discord.gg/fNeggqVMZs",
@@ -32,6 +32,9 @@ end
 if game.PlaceId ~= 8737602449 and game.PlaceId ~= 8943844393 then
 	return
 end
+
+local xspin = 0
+
 print('TurningGlobe ily thanks for showcasing / szze#6220')
 if getgenv().loaded then
 	return
@@ -177,7 +180,8 @@ local sNames = {
 	'boothSwitcher',
 	'serverHopAfterDonation',
 	'jumpsPerRobux',
-	'staffHopA'
+	'staffHopA',
+	'spinSet'
 }
 local sValues = {
 	true,
@@ -220,7 +224,8 @@ local sValues = {
 	false,
 	false,
 	1,
-	true
+	true,
+	false
 }
 if #getgenv().settings ~= sNames then
 	for i, v in ipairs(sNames) do
@@ -689,8 +694,10 @@ local serverHopToggle = serverHopTab:AddSwitch("Auto Server Hop", function(bool)
 	hopSet()
 	saveSettings()
 end)
+
 serverHopTab:AddLabel("Server hop timer resets after donation")
 serverHopToggle:Set(getgenv().settings.serverHopToggle)
+
 local serverHopDelay = serverHopTab:AddSlider("Server Hop Delay (M)", function(x)
 	if settingsLock then
 		return
@@ -719,10 +726,26 @@ local alhop = serverHopTab:AddSwitch("Random Hop", function(bool)
 	getgenv().settings.AlternativeHop = bool
 	saveSettings()
 end)
+
+local sHopSwitch = serverHopTab:AddSwitch('ServerHop after donation',function(bool)
+	getgenv().settings.serverHopAfterDonation = bool
+	saveSettings()
+end)
+
+sHopSwitch:Set(getgenv().settings.ServerHopAfterDonation)
+
+local staffHopSwitch = serverHopTab:AddSwitch('ServerHop if Staff',function(bool)
+	getgenv().settings.staffHopA = bool
+	saveSettings()
+end)
+
+staffHopSwitch:Set(getgenv().settings.staffHopA)
+
 alhop:Set(getgenv().settings.AlternativeHop)
 serverHopTab:AddButton("Server Hop", function()
 	serverHop()
 end)
+
   --Other tab
 otherTab:AddLabel('Dance:')
 local danceDropdown = otherTab:AddDropdown("[ " .. getgenv().settings.danceChoice .. " ]", function(object)
@@ -778,26 +801,27 @@ if getgenv().settings.AnonymousMode then
 	require(game:GetService('ReplicatedStorage').Remotes).Event('SetDonatedVisibility'):FireServer(false)
 end
 
-local sHopSwitch = otherTab:AddSwitch('ServerHop after donation',function(bool)
-	getgenv().settings.serverHopAfterDonation = bool
-	saveSettings()
-end)
-
-sHopSwitch:Set(getgenv().settings.ServerHopAfterDonation)
-
-local staffHopSwitch = otherTab:AddSwitch('ServerHop if Staff',function(bool)
-	getgenv().settings.staffHopA = bool
-	saveSettings()
-end)
-
-staffHopSwitch:Set(getgenv().settings.staffHopA)
-
 task.spawn(function()
 	while task.wait(1) do
 		for i,v in next, Players:GetPlayers() do
 			playerChecker(v)
 			task.wait()
 		end
+	end
+end)
+
+
+local spinToggle = otherTab:AddSwitch('Spin [1R$ = +1 speed]',function(bool)
+	getgenv().settings.spinSet = bool
+	if getgenv().settings.spinSet then
+		local root = Players.LocalPlayer.Character.Humanoid.RootPart
+		local Spin = Instance.new("BodyAngularVelocity")
+		Spin.Name = "Spin"
+		Spin.Parent = root
+		Spin.MaxTorque = Vector3.new(0, math.huge, 0)
+		Spin.AngularVelocity = Vector3.new(0,0.5,0)
+	elseif not getgenv().settings.spinSet and Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin') then
+		Players.LocalPlayer.Character.Humanoid.RootPart.Spin:Destroy()
 	end
 end)
 
@@ -814,8 +838,7 @@ end,
 })
 
 jumpsPerRB:Set(getgenv().settings.jumpsPerRobux)
-
-sHopSwitch:Set(getgenv().settings.serverHopAfterDonation)
+spinToggle:Set(getgenv().settings.spinSet)
 
 if setfpscap and type(setfpscap) == "function" then
 	local fpsLimit = otherTab:AddSlider("FPS Limit", function(x)
@@ -911,6 +934,7 @@ end
 local RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	hopSet()
+	xspin = xspin + Players.LocalPlayer.leaderstats.Raised.Value - RaisedC
 	if getgenv().settings.webhookToggle and getgenv().settings.webhookBox then
 		local LogService = Game:GetService("LogService")
 		local logs = LogService:GetLogHistory()
@@ -921,7 +945,11 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			serverHop()
 		end)
 	end
-	if getgenv().settings.donationJump then
+	if Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin') and getgenv().settings.spinSet then
+		local spin = Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin')
+		spin.AngularVelocity = Vector3.new(0,xspin,0)
+	end
+	if getgenv().settings.donationJump and not getgenv().settings.spinSet then
 		task.spawn(function()
 			if getgenv().settings.jumpsPerRobux == 1 then
 				for i = 1, game:GetService('Players').LocalPlayer.leaderstats.Raised.value - RaisedC do
@@ -951,6 +979,13 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	update()
 end)
 update()
+
+Players.LocalPlayer.CharacterRemoving:Connect(function()
+	if getgenv().settings.spinSet then
+		serverHop()
+	end
+end)
+
 local msgdone = game:GetService('ReplicatedStorage').DefaultChatSystemChatEvents.OnMessageDoneFiltering
 local randommsgs = {
 	'yes',
@@ -985,7 +1020,9 @@ msgdone.OnClientEvent:Connect(function(msgdata)
 		end
 	end)
 end)
-game:GetService("CoreGui").imgui.Windows.Window.Title.Text = "dtt haters welcome | szze#6220"
+if game:GetService("CoreGui").imgui.Windows.Window.Title.Text == "Loading..." then
+	game:GetService("CoreGui").imgui.Windows.Window.Title.Text = "dotgg | szze#6220"
+end
 while task.wait(getgenv().settings.serverHopDelay * 60) do
 	if not hopTimer then
 		hopSet()
