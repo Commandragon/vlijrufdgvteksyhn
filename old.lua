@@ -18,8 +18,8 @@ repeat
 until game:IsLoaded()
 
 if isfile and writefile and typeof(isfile) == 'function' and typeof(writefile) == 'function' then
-	if not isfile('PromptedDiscordCFCommunity.txt') then
-		writefile('PromptedDiscordCFCommunity.txt', game:GetService('HttpService'):JSONEncode('hi'))
+	if not isfile('PromptedDiscordCFCommunity22.txt') then
+		writefile('PromptedDiscordCFCommunity22.txt', game:GetService('HttpService'):JSONEncode('hi'))
 		local Module = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Discord%20Inviter/Source.lua"))()
 		Module.Prompt({
 			invite = "https://discord.gg/fNeggqVMZs",
@@ -1021,7 +1021,7 @@ msgdone.OnClientEvent:Connect(function(msgdata)
 	end)
 end)
 if game:GetService("CoreGui").imgui.Windows.Window.Title.Text == "Loading..." then
-	game:GetService("CoreGui").imgui.Windows.Window.Title.Text = "dotgg | szze#6220"
+	game:GetService("CoreGui").imgui.Windows.Window.Title.Text = "dtt haters hello | szze#6220"
 end
 while task.wait(getgenv().settings.serverHopDelay * 60) do
 	if not hopTimer then
