@@ -393,9 +393,9 @@ local function webhook(msg)
 end
 	  
   --GUI
-local Window = library:AddWindow("welcome dtt haters | szze#6220",
+local Window = library:AddWindow("Pls donate| szze#6220",
   {
-	main_color = Color3.fromRGB(80, 80, 80),
+	main_color = Color3.fromRGB(62.7, 12.5, 94.1),
 	min_size = Vector2.new(373, 433),
 	toggle_key = Enum.KeyCode.RightShift,
 })
