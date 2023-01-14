@@ -1,31 +1,3 @@
---[[
-	This property is protected.
-	You are not allowed to claim this as your own.
-	Removal of initial credits to the authors is prohibited.
-]]
-
-if hookmetamethod and typeof(hookmetamethod) == 'function' then
-	local oldHook
-	oldHook = hookmetamethod(game, "__namecall", function(self, ...)
-		if getnamecallmethod() == "IsVoiceEnabledForUserIdAsync" then
-			return true
-		end
-		return oldHook(self, ...)
-	end)
-end
-
-repeat task.wait() until game:IsLoaded()
-
-if isfile and writefile and typeof(isfile) == 'function' and typeof(writefile) == 'function' then
-	if not isfile('PromptedDiscordLinoriaCFR.txt') then
-		writefile('PromptedDiscordLinoriaCFR.txt', game:GetService('HttpService'):JSONEncode('hi'))
-		local Module = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Discord%20Inviter/Source.lua"))()
-		Module.Prompt({
-			invite = "https://discord.gg/fNeggqVMZs",
-			name = "CF-Community",
-		})
-	end
-end
 
   --Stops script if on a different game
 if game.PlaceId ~= 8737602449 and game.PlaceId ~= 8943844393 then
@@ -38,10 +10,11 @@ else
 	getgenv().loadedR = true
 end
 
+local xspin = 0
+
 local httprequest = (syn and syn.request) or http and http.request or http_request or (fluxus and fluxus.request) or request
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/CF-Trail/random/main/hook/hookwscripts.lua"))()
-task.wait()
+
   --Anti-AFK
 local Players = game:GetService("Players")
 Players.LocalPlayer:Kick('unsupported executor')
@@ -123,14 +96,8 @@ local sNames = {
 }
 local sValues = {
 	{
-		'Duckie Shirt on sale!',
-		'Every robux = I jump',
-		'Duckie killer shirt on sale for a limited time!',
-		'Cute duckie is my new shirt!',
-		'Duck hoodie is my most popular item!',
-		'Dono Pls 🥺!',
-		'Every donation = more shirts',
-		'Please donate 😃'
+		'Jumping for robux!',
+		'1R$ Donated = 1 jump!'
 	},
 	{
 		'Thank you',
@@ -264,9 +231,11 @@ local function update()
 			task.wait(3)
 		end
 	end
-	if Toggles.EquipSignT.Value == true and Players.LocalPlayer.Backpack:FindFirstChild('DonateSign') then
+	if Toggles.EquipSignT.Value == true then
 		local sign = Players.LocalPlayer.Backpack:FindFirstChild('DonateSign')
-		sign.Parent = Players.LocalPlayer.Character
+		if sign then
+		   sign.Parent = Players.LocalPlayer.Character
+		end
 		task.wait(0.3)
 		task.spawn(function()
 			while task.wait(10) do
@@ -300,7 +269,7 @@ end
 
 local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 local httpservice = game:GetService('HttpService')
-queueonteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/CF-Trail/tzechco-PlsDonateAutofarmBackup/main/autofarm'))()")
+queueonteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Commandragon/vlijrufdgvteksyhn/main/autofarm'))()")
 local repoLib = 'https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/'
 
 local Library = loadstring(game:HttpGet(repoLib .. 'Library.lua'))()
@@ -375,6 +344,26 @@ boothOtherSettings:AddToggle('donationJumpToggle', {
     Default = true,
     Tooltip = 'Automatically jumps amount of R$ you got donated',
 })
+
+boothOtherSettings:AddToggle('spinSet', {
+    Text = 'Spin',
+    Default = false,
+    Tooltip = '1R$ Donated = +1 spin speed',
+})
+
+Toggles.spinSet:OnChanged(function()
+	local valll = Toggles.spinSet.Value
+	if valll == true then
+		local root = Players.LocalPlayer.Character.Humanoid.RootPart
+		local Spin = Instance.new("BodyAngularVelocity")
+		Spin.Name = "Spin"
+		Spin.Parent = root
+		Spin.MaxTorque = Vector3.new(0, math.huge, 0)
+		Spin.AngularVelocity = Vector3.new(0,0.1,0)
+	elseif valll == false and Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin') then
+		Players.LocalPlayer.Character.Humanoid.RootPart.Spin:Destroy()
+	end
+end)
 
 boothOtherSettings:AddDropdown('standingPositionDrop', {
     Values = { 'Front', 'Right', 'Left', 'Behind' },
@@ -504,6 +493,16 @@ miscMain:AddSlider('BegDelaySlid', {
     Rounding = 0,
     Compact = false,
 })
+
+miscMain:AddSlider('jumpsPerRobux', {
+	Text = 'Jumps per robux',
+    Default = 1,
+    Min = 1,
+    Max = 50,
+    Rounding = 0,
+    Compact = false,
+})
+
 
 if setfpscap and typeof(setfpscap) == 'function' then
 	miscMain:AddSlider('FpsCapS',{
@@ -722,6 +721,7 @@ end
 local RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	hopSet()
+	xspin = (xspin + Players.LocalPlayer.leaderstats.Raised.Value - RaisedC) / 3
 	if Toggles.webhookToggleT.Value == true then
 		webhook("💰 Tip | Amount: " .. tostring(Players.LocalPlayer.leaderstats.Raised.Value - RaisedC) .. 'R$ (after tax: ' .. tostring(math.floor((Players.LocalPlayer.leaderstats.Raised.Value - RaisedC) * 0.6)) .. 'R$) | Total: ' .. tostring(Players.LocalPlayer.leaderstats.Raised.Value) .. 'R$ | Account: ' .. Players.LocalPlayer.DisplayName .. ' (' .. Players.LocalPlayer.Name .. ')')
 	end
@@ -730,15 +730,28 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 			serverHop()
 		end)
 	end
-	if Toggles.donationJumpToggle.Value == true then
-		task.spawn(function()
-			for i = 1, game:GetService('Players').LocalPlayer.leaderstats.Raised.value - RaisedC do
-				game:GetService('Players').LocalPlayer.Character.Humanoid:ChangeState("Jumping")
-				repeat
-					task.wait()
-				until game:GetService('Players').LocalPlayer.Character.Humanoid:GetState() == Enum.HumanoidStateType.Landed or game:GetService('Players').LocalPlayer.Character.Humanoid:GetState() == Enum.HumanoidStateType.Running
-			end
-		end)
+	if Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin') and Toggles.spinSet.Value == true then
+		local spin = Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin')
+		spin.AngularVelocity = Vector3.new(0,xspin,0)
+	end
+	if Toggles.donationJumpToggle.Value == true and Toggles.spinSet.Value == false then
+			task.spawn(function()
+				if Options.jumpsPerRobux.Value == 1 then
+					for i = 1, game:GetService('Players').LocalPlayer.leaderstats.Raised.value - RaisedC do
+						game:GetService('Players').LocalPlayer.Character.Humanoid:ChangeState("Jumping")
+						repeat
+							task.wait()
+						until game:GetService('Players').LocalPlayer.Character.Humanoid:GetState() == Enum.HumanoidStateType.Running
+					end
+				else
+					for i = 1, (game:GetService('Players').LocalPlayer.leaderstats.Raised.value - RaisedC) * Options.jumpsPerRobux.Value do
+						game:GetService('Players').LocalPlayer.Character.Humanoid:ChangeState("Jumping")
+						repeat
+							task.wait()
+						until game:GetService('Players').LocalPlayer.Character.Humanoid:GetState() == Enum.HumanoidStateType.Running
+					end
+				end
+			end)
 	end
 	RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 	if Toggles.AutoThanksq.Value == true then
@@ -750,6 +763,14 @@ Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	update()
 end)
 update()
+task.spawn(function()
+task.wait(5)
+Players.LocalPlayer.CharacterRemoving:Connect(function()
+	if getgenv().settings.spinSet then
+		serverHop()
+	end
+end)
+end)
 local msgdone = game:GetService('ReplicatedStorage').DefaultChatSystemChatEvents.OnMessageDoneFiltering
 local randommsgs = {
 	'yes',
@@ -784,11 +805,8 @@ msgdone.OnClientEvent:Connect(function(msgdata)
 		end
 	end)
 end)
-
-task.spawn(function()
 	while task.wait(Options.AutoSHMinutes.Value * 60) do
 		if not hopTimer then
 			hopSet()
 		end
 	end
-end)
