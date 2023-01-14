@@ -1,5 +1,7 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/zzerexx/scripts/main/SynapseToScriptWare.lua"))()
 --[[
+
+wait(10)
 	This property is protected.
 	You are not allowed to claim this as your own.
 	Removal of initial credits to the authors is prohibited.
