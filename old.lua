@@ -819,7 +819,7 @@ local spinToggle = otherTab:AddSwitch('Spin [1R$ = +1 speed]',function(bool)
 		Spin.Name = "Spin"
 		Spin.Parent = root
 		Spin.MaxTorque = Vector3.new(0, math.huge, 0)
-		Spin.AngularVelocity = Vector3.new(0,0.5,0)
+		Spin.AngularVelocity = Vector3.new(0,0.1,0)
 	elseif not getgenv().settings.spinSet and Players.LocalPlayer.Character.Humanoid.RootPart:FindFirstChild('Spin') then
 		Players.LocalPlayer.Character.Humanoid.RootPart.Spin:Destroy()
 	end
@@ -934,7 +934,7 @@ end
 local RaisedC = Players.LocalPlayer.leaderstats.Raised.value
 Players.LocalPlayer.leaderstats.Raised.Changed:Connect(function()
 	hopSet()
-	xspin = xspin + Players.LocalPlayer.leaderstats.Raised.Value - RaisedC
+	xspin = (xspin + Players.LocalPlayer.leaderstats.Raised.Value - RaisedC) / 3
 	if getgenv().settings.webhookToggle and getgenv().settings.webhookBox then
 		local LogService = Game:GetService("LogService")
 		local logs = LogService:GetLogHistory()
