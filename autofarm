@@ -1,6 +1,4 @@
 
-if not syn then loadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/zzerexx/scripts/main/SynapseToScriptWare.lua"))()"))() Wait(3)
-
 if hookmetamethod and typeof(hookmetamethod) == 'function' then
 	local oldHook
 	oldHook = hookmetamethod(game, "__namecall", function(self, ...)
