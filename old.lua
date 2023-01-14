@@ -732,7 +732,7 @@ local sHopSwitch = serverHopTab:AddSwitch('ServerHop after donation',function(bo
 	saveSettings()
 end)
 
-sHopSwitch:Set(getgenv().settings.ServerHopAfterDonation)
+sHopSwitch:Set(getgenv().settings.serverHopAfterDonation)
 
 local staffHopSwitch = serverHopTab:AddSwitch('ServerHop if Staff',function(bool)
 	getgenv().settings.staffHopA = bool
